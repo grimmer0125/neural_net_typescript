@@ -1,5 +1,5 @@
 import { Pooling } from './pooling';
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 
 describe('Pooling Layer Test', () => {
   describe('Pooling.forward', () => {
@@ -61,9 +61,7 @@ describe('Pooling Layer Test', () => {
         ],
       ]);
       pooling.forwardBatch(xBatch);
-      const dout = nj.ones([1, 1, 3, 3]).reshape(1, 1, 3, 3) as nj.NdArray<
-        number[][][]
-      >;
+      const dout = nj.ones([1, 1, 3, 3]).reshape(1, 1, 3, 3) as NdArray;
       expect(pooling.backwardBatch(dout).tolist()).toEqual([
         [
           [
@@ -89,7 +87,7 @@ describe('Pooling Layer Test', () => {
       ],
     ]);
     pooling.forwardBatch(xBatch);
-    const dout = nj.arange(9).reshape(1, 1, 3, 3) as nj.NdArray<number[][][]>;
+    const dout = nj.arange(9).reshape(1, 1, 3, 3) as NdArray;
     expect(pooling.backwardBatch(dout).tolist()).toEqual([
       [
         [

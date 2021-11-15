@@ -1,4 +1,4 @@
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 import { Layer } from '../layers/base';
 import { Affine } from '../layers/affine';
 import { Relu } from '../layers/relu';
@@ -8,12 +8,12 @@ import { Convolution } from '../layers/convolution';
 import { Pooling } from '../layers/pooling';
 
 export class SimpleConvNet {
-  convW: nj.NdArray<number[][][]>;
-  convB: nj.NdArray<number>;
-  W1: nj.NdArray<number[]>;
-  b1: nj.NdArray<number>;
-  W2: nj.NdArray<number[]>;
-  b2: nj.NdArray<number>;
+  convW: NdArray;
+  convB: NdArray;
+  W1: NdArray;
+  b1: NdArray;
+  W2: NdArray;
+  b2: NdArray;
   layers: Layer[];
   lossLayer: Layer;
   constructor(
@@ -26,7 +26,7 @@ export class SimpleConvNet {
   ) {
     const convOutputSize =
       (inputDim.Y - convParam.filterSize + 2 * convParam.pad) /
-        convParam.stride +
+      convParam.stride +
       1;
     const poolOutputSize = Math.floor(
       convParam.filterNum * (convOutputSize / 2) * (convOutputSize / 2)
@@ -50,12 +50,12 @@ export class SimpleConvNet {
     this.W1 = nj
       .random([poolOutputSize * hiddenSize])
       .multiply(weightInitStd)
-      .reshape(poolOutputSize, hiddenSize) as nj.NdArray<number[]>;
+      .reshape(poolOutputSize, hiddenSize) as NdArray;
     this.b1 = nj.zeros([hiddenSize]);
     this.W2 = nj
       .random([hiddenSize * outputSize])
       .multiply(weightInitStd)
-      .reshape(hiddenSize, outputSize) as nj.NdArray<number[]>;
+      .reshape(hiddenSize, outputSize) as NdArray;
     this.b2 = nj.zeros([outputSize]);
 
     this.layers = [
@@ -76,10 +76,10 @@ export class SimpleConvNet {
 
   /* 基本的にはバッチ学習であることを前提とする。 */
   forward(
-    xBatch: nj.NdArray<number[][][]>,
-    tBatch: nj.NdArray<number[]>
+    xBatch: NdArray,
+    tBatch: NdArray
   ): number {
-    let scoreBatch: nj.NdArray<number[][][] | number[]> = xBatch;
+    let scoreBatch: NdArray = xBatch;
     for (const layer of this.layers) {
       scoreBatch = layer.forwardBatch(scoreBatch);
     }
@@ -87,7 +87,7 @@ export class SimpleConvNet {
     return loss;
   }
   backward(): void {
-    let dout: nj.NdArray<number[] | number[][][]> =
+    let dout: NdArray =
       this.lossLayer.backwardBatch();
     const reversedLayers = this.layers.slice().reverse();
     for (const layer of reversedLayers) {
@@ -111,12 +111,12 @@ export class SimpleConvNet {
   }
 
   gradient(): {
-    dConvW: nj.NdArray<number[][][]>;
-    dConvB: nj.NdArray<number>;
-    dW1: nj.NdArray<number[]>;
-    db1: nj.NdArray<number>;
-    dW2: nj.NdArray<number[]>;
-    db2: nj.NdArray<number>;
+    dConvW: NdArray;
+    dConvB: NdArray;
+    dW1: NdArray;
+    db1: NdArray;
+    dW2: NdArray;
+    db2: NdArray;
   } {
     const conv = this.layers[0] as Convolution;
     const affine1 = this.layers[3] as Affine;

@@ -1,5 +1,5 @@
 import { col2im, im2col } from './cnn';
-import nj from 'numjs';
+import nj from '@d4c/numjs';
 
 describe('utils/cnn test', () => {
   describe('im2col', () => {

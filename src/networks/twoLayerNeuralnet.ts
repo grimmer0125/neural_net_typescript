@@ -1,4 +1,4 @@
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 import { Layer } from '../layers/base';
 import { Affine } from '../layers/affine';
 import { Relu } from '../layers/relu';
@@ -6,22 +6,22 @@ import { SoftmaxWithLoss } from '../layers/softmaxWithLoss';
 import { softmax, softmaxBatch } from '../utils/activation';
 
 export class TwoLayerNet {
-  W1: nj.NdArray<number[]>;
-  b1: nj.NdArray<number>;
-  W2: nj.NdArray<number[]>;
-  b2: nj.NdArray<number>;
+  W1: NdArray;
+  b1: NdArray;
+  W2: NdArray;
+  b2: NdArray;
   layers: Layer[];
   lossLayer: Layer;
   constructor(inputSize: number, hiddenSize: number, outputSize: number) {
     this.W1 = nj
       .random([inputSize * hiddenSize])
       .multiply(0.01)
-      .reshape(inputSize, hiddenSize) as nj.NdArray<number[]>;
+      .reshape(inputSize, hiddenSize) as NdArray;
     this.b1 = nj.zeros([hiddenSize]);
     this.W2 = nj
       .random([hiddenSize * outputSize])
       .multiply(0.01)
-      .reshape(hiddenSize, outputSize) as nj.NdArray<number[]>;
+      .reshape(hiddenSize, outputSize) as NdArray;
     this.b2 = nj.zeros([outputSize]);
     this.layers = [
       new Affine(this.W1, this.b1),
@@ -31,7 +31,7 @@ export class TwoLayerNet {
     this.lossLayer = new SoftmaxWithLoss();
   }
 
-  predict(x: nj.NdArray<number>): nj.NdArray<number> {
+  predict(x: NdArray): NdArray {
     let output = x;
     for (const layer of this.layers) {
       output = layer.forward(output);
@@ -39,7 +39,7 @@ export class TwoLayerNet {
     return softmax(output);
   }
 
-  predictBatch(xBatch: nj.NdArray<number[]>): nj.NdArray<number[]> {
+  predictBatch(xBatch: NdArray): NdArray {
     let output = xBatch;
     for (const layer of this.layers) {
       output = layer.forwardBatch(output);
@@ -48,8 +48,8 @@ export class TwoLayerNet {
   }
 
   /* 基本的にはバッチ学習であることを前提とする。 */
-  forward(xBatch: nj.NdArray<number[]>, tBatch: nj.NdArray<number[]>): number {
-    let scoreBatch: nj.NdArray<number[]> = xBatch;
+  forward(xBatch: NdArray, tBatch: NdArray): number {
+    let scoreBatch: NdArray = xBatch;
     for (const layer of this.layers) {
       scoreBatch = layer.forwardBatch(scoreBatch);
     }
@@ -57,7 +57,7 @@ export class TwoLayerNet {
     return loss;
   }
   backward(): void {
-    let dout: nj.NdArray<number[]> = this.lossLayer.backwardBatch();
+    let dout: NdArray = this.lossLayer.backwardBatch();
     const reversedLayers = this.layers.slice().reverse();
     for (const layer of reversedLayers) {
       dout = layer.backwardBatch(dout);
@@ -76,10 +76,10 @@ export class TwoLayerNet {
   }
 
   gradient(): {
-    dW1: nj.NdArray<number[]>;
-    db1: nj.NdArray<number>;
-    dW2: nj.NdArray<number[]>;
-    db2: nj.NdArray<number>;
+    dW1: NdArray;
+    db1: NdArray;
+    dW2: NdArray;
+    db2: NdArray;
   } {
     const affine1 = this.layers[0] as Affine;
     const affine2 = this.layers[2] as Affine;

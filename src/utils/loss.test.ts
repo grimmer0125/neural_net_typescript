@@ -1,5 +1,5 @@
 import { crossEntroyError, crossEntroyErrorBatch } from './loss';
-import nj from 'numjs';
+import nj from '@d4c/numjs';
 
 describe('loss function test', () => {
   describe('crossEntropyError', () => {

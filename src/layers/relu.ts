@@ -1,25 +1,25 @@
 import { Layer } from './base';
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 
 export class Relu implements Layer {
-  mask: nj.NdArray<number>;
-  maskBatch: nj.NdArray<number[]>;
+  mask: NdArray;
+  maskBatch: NdArray;
 
   constructor(
-    mask: nj.NdArray<number> = nj.zeros(0),
-    maskBatch: nj.NdArray<number[]> = nj.zeros(0)
+    mask: NdArray = nj.zeros(0),
+    maskBatch: NdArray = nj.zeros(0)
   ) {
     this.mask = mask;
     this.maskBatch = maskBatch;
   }
 
-  forward = (x: nj.NdArray<number>): nj.NdArray<number> => {
+  forward = (x: NdArray): NdArray => {
     const xArray = x.tolist();
     this.mask = nj.array(xArray.map((xItem) => Number(xItem > 0)));
     return x.multiply(this.mask);
   };
 
-  forwardBatch = (xBatch: nj.NdArray<number[]>): nj.NdArray<number[]> => {
+  forwardBatch = (xBatch: NdArray): NdArray => {
     const xArrayBatch = xBatch.tolist();
     this.maskBatch = nj.array(
       xArrayBatch.map((xArray) => xArray.map((x) => Number(x > 0)))
@@ -27,11 +27,11 @@ export class Relu implements Layer {
     return xBatch.multiply(this.maskBatch);
   };
 
-  backward = (dout: nj.NdArray<number>): nj.NdArray<number> => {
+  backward = (dout: NdArray): NdArray => {
     return dout.multiply(this.mask);
   };
 
-  backwardBatch = (dout: nj.NdArray<number[]>): nj.NdArray<number[]> => {
+  backwardBatch = (dout: NdArray): NdArray => {
     return dout.multiply(this.maskBatch);
   };
 }

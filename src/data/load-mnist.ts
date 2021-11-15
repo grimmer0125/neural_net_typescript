@@ -1,4 +1,4 @@
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 import fetch from 'node-fetch';
 import fs from 'fs';
 import zlib from 'zlib';
@@ -35,7 +35,7 @@ const donwloadMnist = async (): Promise<void> => {
   }
 };
 
-const _loadLabelData = async (labelFilename: string): Promise<nj.NdArray> => {
+const _loadLabelData = async (labelFilename: string): Promise<NdArray> => {
   const offset = 8;
   let labelData = fs.readFileSync(path.join(__dirname, 'mnist', labelFilename));
   labelData = labelData.slice(offset);
@@ -43,11 +43,9 @@ const _loadLabelData = async (labelFilename: string): Promise<nj.NdArray> => {
   return label;
 };
 
-const labelToOneHot = (labelArr: nj.NdArray): nj.NdArray<number[]> => {
+const labelToOneHot = (labelArr: NdArray): NdArray => {
   const dataNum = labelArr.shape[0];
-  const oneHotMat = nj.zeros(dataNum * 10).reshape(dataNum, 10) as nj.NdArray<
-    number[]
-  >;
+  const oneHotMat = nj.zeros(dataNum * 10).reshape(dataNum, 10) as NdArray;
   for (let i = 0; i < dataNum; i++) {
     oneHotMat.set(i, labelArr.get(i), 1);
   }
@@ -55,8 +53,8 @@ const labelToOneHot = (labelArr: nj.NdArray): nj.NdArray<number[]> => {
 };
 
 const loadLabelData = async (): Promise<{
-  trainLabel: nj.NdArray<number[]>;
-  testLabel: nj.NdArray<number[]>;
+  trainLabel: NdArray;
+  testLabel: NdArray;
 }> => {
   const filenameDict = {
     trainLabelFilename: 'train-labels-idx1-ubyte',
@@ -72,7 +70,7 @@ const loadLabelData = async (): Promise<{
 
 const _loadImageData = async (
   imgFilename: string
-): Promise<nj.NdArray<number[]>> => {
+): Promise<NdArray> => {
   const offset = 16;
   const mnistDataSize = 784; // 28 * 28
   let imgData = fs.readFileSync(path.join(__dirname, 'mnist', imgFilename));
@@ -80,16 +78,16 @@ const _loadImageData = async (
   imgData = imgData.slice(offset);
   const img = nj
     .array(Array.from(imgData))
-    .reshape(dataNum, mnistDataSize) as nj.NdArray<number[]>;
+    .reshape(dataNum, mnistDataSize) as NdArray;
   return img;
 };
 
 /*
-loadImageDataはmnistの画像データを読み込み、784(=28*28)個の要素を持つ一次元のnj.Ndarrayに変換し、それらを値として返す。
+loadImageDataはmnistの画像データを読み込み、784(=28*28)個の要素を持つ一次元のNdArrayに変換し、それらを値として返す。
 */
 const loadImageData = async (): Promise<{
-  trainImg: nj.NdArray<number[]>;
-  testImg: nj.NdArray<number[]>;
+  trainImg: NdArray;
+  testImg: NdArray;
 }> => {
   const filenameDict = {
     trainImgFilename: 'train-images-idx3-ubyte',
@@ -107,10 +105,10 @@ export async function loadMnist<T extends 'array' | 'image'>(
   imageFmt = 'array' as T,
   normalize = true
 ): Promise<{
-  xTrain: nj.NdArray<T extends 'array' ? number[] : number[][][]>;
-  yTrain: nj.NdArray<number[]>;
-  xTest: nj.NdArray<T extends 'array' ? number[] : number[][][]>;
-  yTest: nj.NdArray<number[]>;
+  xTrain: NdArray;
+  yTrain: NdArray;
+  xTest: NdArray;
+  yTest: NdArray;
 }> {
   const filenameArr = Object.values(keyFiles);
   try {
@@ -138,9 +136,9 @@ export async function loadMnist<T extends 'array' | 'image'>(
     };
   }
   return {
-    xTrain: trainImg as nj.NdArray<T extends 'array' ? number[] : number[][][]>,
+    xTrain: trainImg as NdArray,
     yTrain: trainLabel,
-    xTest: testImg as nj.NdArray<T extends 'array' ? number[] : number[][][]>,
+    xTest: testImg as NdArray,
     yTest: testLabel,
   };
 }

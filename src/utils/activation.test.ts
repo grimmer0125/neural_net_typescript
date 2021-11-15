@@ -1,5 +1,5 @@
 import { softmax, softmaxBatch } from './activation';
-import nj from 'numjs';
+import nj from '@d4c/numjs';
 
 describe('activation test', () => {
   describe('softmax', () => {
