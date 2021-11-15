@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "typescriptプロジェクトのオリジナル初期設定",
   "scripts": {
-    "learn":"ts-node src/index.ts tnn",
-    "learn:tnn":"ts-node src/index.ts tnn",
-    "learn:cnn":"ts-node src/index.ts cnn",
+    "learn": "ts-node src/index.ts tnn",
+    "learn:tnn": "ts-node src/index.ts tnn",
+    "learn:cnn": "ts-node src/index.ts cnn",
     "dev": "ts-node src/index.ts",
-    "download:mnist":"ts-node src/download.ts",
+    "download:mnist": "ts-node src/download.ts",
     "dev:watch": "ts-node-dev --respawn src/index.ts",
     "build": "tsc -p .",
     "clean": "rm -rf dist",
@@ -33,7 +33,6 @@
     "@types/jest": "^27.0.1",
     "@types/node": "^16.4.0",
     "@types/node-fetch": "^2.5.12",
-    "@types/numjs": "^0.16.1",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
     "babel-jest": "^27.0.6",
@@ -47,7 +46,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "node-fetch": "^2.6.1",
-    "numjs": "https://github.com/nicolaspanel/numjs"
+    "@d4c/numjs": "^0.17.22",
+    "node-fetch": "^2.6.1"
   }
 }
