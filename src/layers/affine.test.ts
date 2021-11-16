@@ -1,5 +1,5 @@
 import { Affine } from './affine';
-import nj from 'numjs';
+import nj from '@d4c/numjs';
 
 describe('Affine Layer Test', () => {
   describe('Affine.forward', () => {

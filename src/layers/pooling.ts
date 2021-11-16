@@ -1,5 +1,5 @@
 import { Layer } from './base';
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 import { col2im, im2col } from '../utils/cnn';
 
 export class Pooling implements Layer {
@@ -7,8 +7,8 @@ export class Pooling implements Layer {
   poolW: number;
   stride: number;
   pad: number;
-  argMax: nj.NdArray<number> = nj.zeros(0);
-  xBatch: nj.NdArray<number[][][]> = nj.zeros(0);
+  argMax: NdArray = nj.zeros(0);
+  xBatch: NdArray = nj.zeros(0);
 
   constructor(poolH: number, poolW: number, stride = 1, pad = 0) {
     this.poolH = poolH;
@@ -20,7 +20,7 @@ export class Pooling implements Layer {
   forward(): void {
     return;
   }
-  forwardBatch(xBatch: nj.NdArray<number[][][]>): nj.NdArray<number[][][]> {
+  forwardBatch(xBatch: NdArray): NdArray {
     const [N, C, H, W] = xBatch.shape;
     const outH = Math.floor(1 + (H - this.poolH) / this.stride);
     const outW = Math.floor(1 + (W - this.poolW) / this.stride);
@@ -30,9 +30,7 @@ export class Pooling implements Layer {
       this.poolW,
       this.stride,
       this.pad
-    ).reshape(outH * outW * N * C, this.poolH * this.poolW) as nj.NdArray<
-      number[]
-    >;
+    ).reshape(outH * outW * N * C, this.poolH * this.poolW) as NdArray;
     const out = (
       nj
         .array(
@@ -40,7 +38,7 @@ export class Pooling implements Layer {
             return Math.max(...convoluteOutput);
           })
         )
-        .reshape(N, outH, outW, C) as nj.NdArray<number[][][]>
+        .reshape(N, outH, outW, C) as NdArray
     ).transpose(0, 3, 1, 2);
     this.argMax = nj.array(
       col.tolist().map((convoluteOutput) => {
@@ -55,12 +53,12 @@ export class Pooling implements Layer {
   backward(): void {
     return;
   }
-  backwardBatch(dout: nj.NdArray<number[][][]>): nj.NdArray<number[][][]> {
+  backwardBatch(dout: NdArray): NdArray {
     const poolSize = this.poolH * this.poolW;
     dout = dout.transpose(0, 2, 3, 1);
     let dmax = nj
       .zeros(dout.size * poolSize)
-      .reshape(dout.size, poolSize) as nj.NdArray<number[]>;
+      .reshape(dout.size, poolSize) as NdArray;
     const doutFlattenLs = dout.flatten().tolist() as number[];
     for (let i = 0; i < dout.size; i++) {
       dmax.set(i, this.argMax.get(i), doutFlattenLs[i]);
@@ -69,7 +67,7 @@ export class Pooling implements Layer {
     const dcol = dmax.reshape(
       dmax.shape[0] * dmax.shape[1] * dmax.shape[2],
       -1
-    ) as nj.NdArray<number[]>;
+    ) as NdArray;
     const [n, d, h, w] = this.xBatch.shape;
     const dx = col2im(
       dcol,

@@ -1,15 +1,11 @@
 import { Convolution } from './convolution';
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 
 describe('Convolution Layer Test', () => {
   describe('Convolution,forward', () => {
     test('forward', () => {
-      const W = nj.ones([1, 1, 3, 3]).reshape(1, 1, 3, 3) as nj.NdArray<
-        number[][][]
-      >;
-      const xBatch = nj.ones([1, 1, 5, 5]).reshape(1, 1, 5, 5) as nj.NdArray<
-        number[][][]
-      >; // 10枚 の 3*5*5次元の画像
+      const W = nj.ones([1, 1, 3, 3]).reshape(1, 1, 3, 3) as NdArray;
+      const xBatch = nj.ones([1, 1, 5, 5]).reshape(1, 1, 5, 5) as NdArray; // 10枚 の 3*5*5次元の画像
       const b = nj.zeros(1);
       const conv = new Convolution(W, b);
       expect(conv.forwardBatch(xBatch).tolist()).toEqual([
@@ -23,12 +19,8 @@ describe('Convolution Layer Test', () => {
       ]);
     });
     test('forward', () => {
-      const W = nj.ones([5, 3, 3, 3]).reshape(5, 3, 3, 3) as nj.NdArray<
-        number[][][]
-      >;
-      const xBatch = nj.ones([10, 3, 5, 5]).reshape(10, 3, 5, 5) as nj.NdArray<
-        number[][][]
-      >; // 10枚 の 3*5*5次元の画像
+      const W = nj.ones([5, 3, 3, 3]).reshape(5, 3, 3, 3) as NdArray;
+      const xBatch = nj.ones([10, 3, 5, 5]).reshape(10, 3, 5, 5) as NdArray; // 10枚 の 3*5*5次元の画像
       const b = nj.arange(5);
       const conv = new Convolution(W, b);
       expect(conv.forwardBatch(xBatch).tolist()).toEqual([
@@ -307,18 +299,12 @@ describe('Convolution Layer Test', () => {
   });
   describe('Convolution,backward', () => {
     test('backward', () => {
-      const W = nj.ones([1, 1, 3, 3]).reshape(1, 1, 3, 3) as nj.NdArray<
-        number[][][]
-      >;
-      const xBatch = nj.ones([1, 1, 5, 5]).reshape(1, 1, 5, 5) as nj.NdArray<
-        number[][][]
-      >; // 10枚 の 3*5*5次元の画像
+      const W = nj.ones([1, 1, 3, 3]).reshape(1, 1, 3, 3) as NdArray;
+      const xBatch = nj.ones([1, 1, 5, 5]).reshape(1, 1, 5, 5) as NdArray; // 10枚 の 3*5*5次元の画像
       const b = nj.zeros(1);
       const conv = new Convolution(W, b);
       conv.forwardBatch(xBatch);
-      const dout = nj.ones([1, 3, 3, 1]).reshape(1, 3, 3, 1) as nj.NdArray<
-        number[][][]
-      >;
+      const dout = nj.ones([1, 3, 3, 1]).reshape(1, 3, 3, 1) as NdArray;
       expect(conv.backwardBatch(dout).tolist()).toEqual([
         [
           [

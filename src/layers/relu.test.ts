@@ -1,5 +1,5 @@
 import { Relu } from './relu';
-import nj from 'numjs';
+import nj from '@d4c/numjs';
 
 describe('Relu Layer Test', () => {
   describe('Relu.forward', () => {

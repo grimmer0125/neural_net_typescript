@@ -1,4 +1,4 @@
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 
 export const choice = (max: number, length: number): number[] => {
   const randArray: number[] = new Array(length).fill(0);
@@ -17,8 +17,8 @@ export const range = (from: number, to: number, step = 1): number[] => {
 
 export const getBatchData = <T extends number[] | number[][][]>(
   idxArr: number[],
-  data: nj.NdArray<T>
-): nj.NdArray<T> => {
+  data: NdArray
+): NdArray => {
   const dataArr = data.tolist();
   return nj.array(
     idxArr.map((idx) => {

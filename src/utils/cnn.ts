@@ -1,15 +1,15 @@
-import nj from 'numjs';
+import nj, { NdArray } from '@d4c/numjs';
 
 /**
  * 画像のバッチデータや複数のcnnの重み行列といった4次元データを2次元の行列に変換する。
  */
 export const im2col = (
-  input: nj.NdArray<number[][][]>,
+  input: NdArray,
   filterH: number,
   filterW: number,
   stride = 1,
   padding = 0
-): nj.NdArray<number[]> => {
+): NdArray => {
   const [N, D, H, W] = input.shape;
   const inputList = input.tolist();
   const colItem: number[][] = [];
@@ -37,13 +37,13 @@ export const im2col = (
  * 2次元の行列を画像のバッチデータや複数のcnnの重み行列といった4次元データに変換する。im2colと逆の効果を持つ。
  */
 export const col2im = (
-  input: nj.NdArray<number[]>,
+  input: NdArray,
   shape: { n: number; d: number; h: number; w: number }, // TODO:migrate to fixed length array
   filterH: number,
   filterW: number,
   stride = 1,
   padding = 0
-): nj.NdArray<number[][][]> => {
+): NdArray => {
   const { n: N, d: D, h: H, w: W } = shape;
   const OH = (H + 2 * padding - filterH) / stride + 1;
   const OW = (W + 2 * padding - filterW) / stride + 1;
@@ -57,14 +57,14 @@ export const col2im = (
         (
           input
             .slice([i, i + filterOutputSize], [j, j + filterSize])
-            .reshape(OH * OW, filterH, filterW) as nj.NdArray<number[][]>
+            .reshape(OH * OW, filterH, filterW) as NdArray
         ).tolist()
       );
     }
     imgArr.push(imgData);
   }
   const col = (
-    nj.zeros([N, D, H, W]).reshape(N, D, H, W) as nj.NdArray<number[][][]>
+    nj.zeros([N, D, H, W]).reshape(N, D, H, W) as NdArray
   ).tolist();
   for (let g = 0; g < N; g++) {
     for (let h = 0; h < D; h++) {

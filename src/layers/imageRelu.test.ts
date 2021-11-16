@@ -1,5 +1,5 @@
 import { ImageRelu } from './imageRelu';
-import nj from 'numjs';
+import nj from '@d4c/numjs';
 
 describe('ImageRelu Layer Test', () => {
   describe('ImageRelu.forwardBatch', () => {
